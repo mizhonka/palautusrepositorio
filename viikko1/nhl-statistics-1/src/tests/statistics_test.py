@@ -1,6 +1,7 @@
 import unittest
 from statistics_service import StatisticsService
 from player import Player
+from sortBy import SortBy
 
 def ComparePlayers(p1, p2):
     if not p1.name==p2.name:
@@ -49,11 +50,24 @@ class TestStatisticService(unittest.TestCase):
                 self.assertTrue(False)
         self.assertTrue(True)
 
-    def test_players_are_sorted(self):
-        players=self.stub.get_players()
-        sorted=[players[4], players[1],players[3],players[2],players[0]]
-        r=self.stats.top(4)
+    def sort(self, sortBy, sorted):
+        r=self.stats.top(4, sortBy)
         for i in range(0, 5):
             if not ComparePlayers(sorted[i], r[i]):
                 self.assertTrue(False)
         self.assertTrue(True)
+
+    def test_sorted_by_points(self):
+        players=self.stub.get_players()
+        sorted=[players[4], players[1],players[3],players[2],players[0]]
+        self.sort(SortBy.POINTS, sorted)
+
+    def test_sorted_by_goals(self):
+        players=self.stub.get_players()
+        sorted=[players[1], players[3],players[2],players[4],players[0]]
+        self.sort(SortBy.GOALS, sorted)
+
+    def test_sorted_by_assists(self):
+        players=self.stub.get_players()
+        sorted=[players[4], players[3],players[1],players[2],players[0]]
+        self.sort(SortBy.ASSISTS, sorted)
