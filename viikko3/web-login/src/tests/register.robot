@@ -33,6 +33,26 @@ Register With Nonmatching Password And Password Confirmation
     Submit New Credentials
     Register Should Fail With Message  The passwords don't match
 
+Login After Successful Registration
+    Set Username  maija
+    Set Password  maija123
+    Set Password Confirmation  maija123
+    Submit New Credentials
+    Continue To Login
+    Login
+    Login Should Succeed
+
+Login After Failed Registration
+    Set Username  m
+    Set Password  maijahii
+    Set Password Confirmation  maijahii
+    Submit New Credentials
+    Go To Login Page
+    Login
+    Login Should Fail With Message  Invalid username or password
+
+
+
 *** Keywords ***
 Set Username
     [Arguments]  ${username}
@@ -49,12 +69,32 @@ Set Password Confirmation
 Submit New Credentials
     Click Button  Register
 
+Submit Credentials
+    Click Button  Login
+
 Register Should Succeed
     Welcome Page Should Be Open
 
 Register Should Fail With Message
     [Arguments]  ${message}
     Register Page Should Be Open
+    Page Should Contain  ${message}
+
+Continue To Login
+    Go To Ohtu Page
+    Click Button  Logout
+
+Login
+    Set Username  maija
+    Set Password  maija123
+    Submit Credentials
+
+Login Should Succeed
+    Main Page Should Be Open
+
+Login Should Fail With Message
+    [Arguments]  ${message}
+    Login Page Should Be Open
     Page Should Contain  ${message}
 
 

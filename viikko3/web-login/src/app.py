@@ -94,7 +94,7 @@ def ping():
 
 
 # sovelluksen tilan alustaminen testejä varten
-@app.route("/tests/reset", methods=["POST"])
+@app.route("/tests/reset")
 def reset_tests():
     user_repository.delete_all()
     return "Reset"
