@@ -110,18 +110,23 @@ class TestKauppa(unittest.TestCase):
 
         self.pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", ANY, 10)
 
-    def test_tilisiirtoa_kutsutaan_kahdella_tuotteella_toinen_loppu(self):
+    def test_tilisiirtoa_ei_kutsuta_loppuneella_tuotteella(self):
 
+        saldot={}
+        saldot[1]=1
         def varasto_saldo(tuote_id):
-            if tuote_id == 1:
-                return 1
+            return saldot[tuote_id]
 
         def varasto_hae_tuote(tuote_id):
             if tuote_id == 1:
                 return Tuote(1, "maito", 5)
 
+        def varasto_ota_tuote(tuote):
+            saldot[tuote.id]-=1
+
         self.varasto_mock.saldo.side_effect = varasto_saldo
         self.varasto_mock.hae_tuote.side_effect = varasto_hae_tuote
+        self.varasto_mock.ota_varastosta=varasto_ota_tuote
 
         kauppa = Kauppa(self.varasto_mock, self.pankki_mock, self.viitegeneraattori_mock)
 
@@ -130,4 +135,4 @@ class TestKauppa(unittest.TestCase):
         kauppa.lisaa_koriin(1)
         kauppa.tilimaksu("pekka", "12345")
 
-        self.pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", ANY, 10)
+        self.pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", ANY, 5)
